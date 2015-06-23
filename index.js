@@ -45,11 +45,12 @@ function addObject(currentObject, path, objectToAdd) {
 }
 
 Merger.prototype.write = function (readTree, destDir) {
-  var self = this
+  var self = this;
 
   return readTree(this.inputTree).then(function (srcDir) {
     var sourcePath = path.join(srcDir, self.options.srcDir);
     var destPath   = path.join(destDir, self.options.destDir);
+    var outputAsModule = self.options.outputAsModule ? true : false;
 
     if (destPath[destPath.length -1] === '/') {
       destPath = destPath.slice(0, -1);
@@ -60,25 +61,31 @@ Merger.prototype.write = function (readTree, destDir) {
     }
 
     var subDirNames = fs.readdirSync(sourcePath).filter(function(d) {
+      // d are the subdir
       var stats = fs.statSync(path.join(sourcePath, d));
       return d[0] != '.' && stats.isDirectory(); // exclude anything that starts with a . and isn't a directory
     });
 
+    var output = {};
+    var outputFile = path.join(destPath, self.options.destFileName + '.json');
+
     subDirNames.forEach(function(subDirName) {
-      var outputFile = path.join(destPath, subDirName + '.json');
       var filesDir = path.join(sourcePath, subDirName);
+      var inputFiles = helpers.multiGlob(['**/*.json'], {cwd: filesDir});
 
-      var inputFiles = helpers.multiGlob(['**/*.json'], {cwd: filesDir})
-
-      var output = {};
-      var test = "";
       inputFiles.forEach(function(inputFile) {
         var parts = inputFile.split("/");
+        var language = path.basename(inputFile, '.json');        
         var fileContent = JSON.parse(fs.readFileSync(path.join(filesDir, inputFile)));
-        parts[parts.length - 1] = path.basename(parts[parts.length - 1], '.json');
+
+        // set the language as the root part
+        parts.unshift(language);
+        // remove the file name as a key
+        parts.pop();
         addObject(output, parts, fileContent);
       });
-      fs.writeFileSync(outputFile, JSON.stringify(output));
     });
+
+    fs.writeFileSync(outputFile, JSON.stringify(output));
   });
 }
