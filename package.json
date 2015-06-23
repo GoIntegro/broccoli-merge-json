@@ -1,5 +1,5 @@
 {
-  "name": "broccoli-merge-json",
+  "name": "go-i18n-broccoli-merge-json",
   "version": "0.0.2",
   "description": "Broccoli plugin to merge multiple json files into one",
   "author": "Tom De Smet <tdesmet@gmail.com>",
