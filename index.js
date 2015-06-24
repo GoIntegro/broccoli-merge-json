@@ -77,9 +77,8 @@ Merger.prototype.write = function (readTree, destDir) {
         var parts = inputFile.split("/");
         var language = path.basename(inputFile, '.json');        
         var fileContent = JSON.parse(fs.readFileSync(path.join(filesDir, inputFile)));
-
-        // set the language as the root part
-        parts.unshift(language);
+        // set the language and first folder as the first parts
+        parts.unshift(language,subDirName);
         // remove the file name as a key
         parts.pop();
         addObject(output, parts, fileContent);
