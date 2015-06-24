@@ -67,7 +67,7 @@ Merger.prototype.write = function (readTree, destDir) {
     });
 
     var output = {};
-    var outputFile = path.join(destPath, self.options.destFileName + '.json');
+    var outputFile = path.join(destPath, self.options.destFileName);
 
     subDirNames.forEach(function(subDirName) {
       var filesDir = path.join(sourcePath, subDirName);
@@ -86,6 +86,11 @@ Merger.prototype.write = function (readTree, destDir) {
       });
     });
 
-    fs.writeFileSync(outputFile, JSON.stringify(output));
+    var finalOutput = JSON.stringify(output),
+        template = self.options.template;
+    if(template) {
+      finalOutput = template.replace('{{content}}', finalOutput);
+    } 
+    fs.writeFileSync(outputFile, finalOutput);
   });
 }
