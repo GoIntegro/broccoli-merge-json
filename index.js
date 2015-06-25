@@ -21,21 +21,14 @@ function addObject(currentObject, path, objectToAdd) {
   prop = changeCase.camel(prop);
 
   if (path.length === 1) {
-    if (prop.toLowerCase() === "index") {
-      //copy properties from objectToAdd to currentObject
+    if (typeof(currentObject[prop]) === "object") {
+      //copy properties from objectToAdd to currentObject[prop]
+      var objectToAddTo = currentObject[prop];
       Object.keys(objectToAdd).forEach(function(key) {
-        currentObject[key] = objectToAdd[key];
+        objectToAddTo[key] = objectToAdd[key];
       });
     } else {
-      if (typeof(currentObject[prop]) === "object") {
-        //copy properties from objectToAdd to currentObject[prop]
-        var objectToAddTo = currentObject[prop];
-        Object.keys(objectToAdd).forEach(function(key) {
-          objectToAddTo[key] = objectToAdd[key];
-        });
-      } else {
-        currentObject[prop] = objectToAdd;
-      }
+      currentObject[prop] = objectToAdd;
     }
   } else {
     var nextObject = currentObject[prop] || {};
