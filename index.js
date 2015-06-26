@@ -18,7 +18,6 @@ function Merger (inputTree, options) {
 
 function addObject(currentObject, path, objectToAdd) {
   var prop = path[0];
-  prop = changeCase.camel(prop);
 
   if (path.length === 1) {
     if (typeof(currentObject[prop]) === "object") {
